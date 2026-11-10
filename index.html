@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>實尺寸照片／證件排版</title>
+  <style>
+    :root{--ink:#17231e;--muted:#66736d;--brand:#176b4b;--brand2:#dff1e8;--paper:#fff;--line:#d9dfdb;--bg:#edf0ed;--danger:#a33b31;--zoom:1;--paper-w:210mm;--paper-h:297mm}
+    *{box-sizing:border-box} body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+    button,input,select{font:inherit} button{cursor:pointer}
+    .app{min-height:100vh;display:grid;grid-template-columns:330px 1fr}
+    .panel{background:#f9faf8;border-right:1px solid var(--line);padding:24px;overflow:auto;height:100vh;position:sticky;top:0}
+    h1{font-size:22px;margin:0 0 5px;letter-spacing:.02em}.sub{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:22px}
+    .section{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}.section h2{font-size:14px;margin:0 0 12px}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0;flex:1}
+    select,input[type=number]{width:100%;border:1px solid #cbd3ce;background:#fff;border-radius:9px;padding:9px;color:var(--ink)}
+    .setup-card{border:2px solid #9bcab5;background:#f1f8f4;border-radius:14px;padding:14px;margin-top:14px}.setup-card label.step{font-size:13px;font-weight:800;color:var(--ink);margin-top:12px}.setup-card label.step:first-child{margin-top:0}.setup-card select{font-size:16px;font-weight:700;border:2px solid var(--brand);padding:12px;background:#fff}.setup-card .upload{margin-top:14px;padding:16px;font-size:16px}
+    .upload{display:block;text-align:center;padding:13px;border:1px dashed var(--brand);background:var(--brand2);color:var(--brand);border-radius:11px;font-weight:700;cursor:pointer}.upload input{display:none}
+    .btn{border:1px solid #cbd3ce;background:#fff;border-radius:9px;padding:9px 10px;color:var(--ink)}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}.btn.danger{color:var(--danger)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions .wide{grid-column:1/-1}
+    .hint{background:#eef4f0;border-radius:10px;padding:10px;font-size:12px;line-height:1.55;color:#4e5c55}.privacy{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:var(--muted);margin-top:12px}.privacy b{color:var(--brand)}
+    .workspace{padding:30px;overflow:auto;display:flex;flex-direction:column;align-items:center}.toolbar{width:min(100%,850px);display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:var(--muted);font-size:13px}.zoom{display:flex;align-items:center;gap:8px}.zoom input{width:130px}
+    .stage{width:calc(var(--paper-w) * var(--zoom));height:calc(var(--paper-h) * var(--zoom));position:relative;margin-bottom:40px}
+    .paper{position:absolute;left:0;top:0;width:var(--paper-w);height:var(--paper-h);background:var(--paper);box-shadow:0 14px 45px #1a262129;transform:scale(var(--zoom));transform-origin:top left;overflow:hidden}
+    .safe{position:absolute;inset:5mm;border:.25mm dashed #bfc8c2;pointer-events:none}.safe::before{content:"建議安全邊界 5 mm";position:absolute;top:1mm;left:2mm;color:#adb6b0;font-size:2.7mm}
+    .doc{position:absolute;touch-action:none;user-select:none;border:.35mm solid transparent;background:#f3f3f3;cursor:move}.doc.selected{border-color:#159463;box-shadow:0 0 0 .7mm #15946333}.doc .viewport{width:100%;height:100%;overflow:hidden}.doc img{width:100%;height:100%;display:block;object-fit:cover;pointer-events:none;transform-origin:center}.doc .tag{display:none;position:absolute;bottom:100%;left:-.35mm;background:#159463;color:#fff;font-size:2.7mm;padding:.7mm 1.3mm;white-space:nowrap}.doc.selected .tag{display:block}
+    .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#9aa49e;font-size:4mm;line-height:1.7;pointer-events:none}.has-docs .empty{display:none}
+    .calibration{display:none}.calibration .bar{width:50mm;border-top:.4mm solid #000;position:relative}.calibration .bar:before,.calibration .bar:after{content:"";position:absolute;top:-1.5mm;height:3mm;border-left:.4mm solid #000}.calibration .bar:before{left:0}.calibration .bar:after{right:0}.calibration span{font-size:3mm}
+    .status{font-size:12px;color:var(--brand);min-height:18px;margin-top:8px}
+    .crop-modal{position:fixed;inset:0;z-index:50;background:#101713d9;display:grid;place-items:center;padding:20px}.crop-modal[hidden]{display:none}.crop-card{width:min(900px,96vw);background:#f9faf8;border-radius:16px;padding:18px;box-shadow:0 22px 70px #0008}.crop-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.crop-head h2{font-size:17px;margin:0}.crop-wrap{height:min(62vh,620px);background:#202823;border-radius:10px;display:grid;place-items:center;overflow:hidden;position:relative}.crop-wrap canvas{max-width:100%;max-height:100%;touch-action:none;cursor:grab}.crop-wrap canvas:active{cursor:grabbing}.crop-tools{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}.crop-tools input[type=range]{flex:1;min-width:150px}.crop-note{font-size:12px;color:var(--muted)}
+    .view-controls{background:#eef4f0;border-radius:10px;padding:10px;margin:10px 0}.view-controls input[type=range]{width:100%;accent-color:var(--brand)}
+    @media(max-width:800px){.app{grid-template-columns:1fr}.panel{height:auto;position:relative;border-right:0;border-bottom:1px solid var(--line);padding:16px}.workspace{padding:14px;align-items:flex-start}.stage{margin-left:0}.btn{min-height:44px}.toolbar{position:sticky;left:0}.crop-modal{padding:8px}.crop-card{padding:12px}.crop-wrap{height:52vh}.crop-tools .btn{flex:1 1 45%}}
+    @page{size:A4 portrait;margin:0}
+    @media print{html,body{width:var(--paper-w);height:var(--paper-h);margin:0!important;padding:0!important;background:#fff}.panel,.toolbar{display:none!important}.app,.workspace,.stage{display:block!important;width:var(--paper-w)!important;height:var(--paper-h)!important;margin:0!important;padding:0!important;overflow:hidden!important}.paper{position:relative!important;box-shadow:none!important;transform:none!important}.safe,.tag,.empty{display:none!important}.doc,.doc.selected{border:0!important;box-shadow:none!important}.calibration.show{display:block!important;position:absolute;left:10mm;bottom:7mm}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <aside class="panel">
+    <h1>實尺寸照片／證件排版</h1>
+    <div class="sub">先選紙張，再選每張照片要印出的實際尺寸。圖片保持原比例，不會被拉扁。</div>
+    <div class="setup-card">
+      <label class="step" for="paperSize">① 輸出紙張</label>
+      <select id="paperSize">
+        <option value="210,297">A4（210 × 297 mm）</option>
+        <option value="148,210">A5（148 × 210 mm）</option>
+        <option value="101.6,152.4">4 × 6 相片紙（101.6 × 152.4 mm）</option>
+        <option value="127,177.8">5 × 7 相片紙（127 × 177.8 mm）</option>
+        <option value="152.4,203.2">6 × 8 相片紙（152.4 × 203.2 mm）</option>
+        <option value="203.2,254">8 × 10 相片紙（203.2 × 254 mm）</option>
+        <option value="215.9,279.4">Letter（215.9 × 279.4 mm）</option>
+      </select>
+      <label class="step" for="preset">② 照片／證件印出尺寸</label>
+      <select id="preset">
+        <optgroup label="證件與文件">
+          <option value="85.6,54">身分證／健保卡／信用卡（85.6 × 54 mm）</option>
+          <option value="125,88">護照封面（125 × 88 mm）</option>
+          <option value="140,88">常見存摺封面（140 × 88 mm）</option>
+          <option value="210,297">A4 文件（210 × 297 mm）</option>
+        </optgroup>
+        <optgroup label="大頭照">
+          <option value="28,35">台灣一吋大頭照（28 × 35 mm）</option>
+          <option value="35,45">台灣二吋／護照照（35 × 45 mm）</option>
+          <option value="25,35">國際一吋照片（25 × 35 mm）</option>
+          <option value="30,40">履歷照片（30 × 40 mm）</option>
+          <option value="51,51">美國簽證照（51 × 51 mm）</option>
+        </optgroup>
+        <optgroup label="一般照片">
+          <option value="89,127">3.5 × 5 相片（89 × 127 mm）</option>
+          <option value="101.6,152.4">4 × 6 相片（101.6 × 152.4 mm）</option>
+          <option value="127,177.8">5 × 7 相片（127 × 177.8 mm）</option>
+          <option value="152.4,203.2">6 × 8 相片（152.4 × 203.2 mm）</option>
+        </optgroup>
+        <option value="custom">自訂印出長寬</option>
+      </select>
+      <div class="row" id="customPreset" hidden><div><label>自訂寬度 mm</label><input id="customW" type="number" min="5" max="215.9" step="0.1" value="100"></div><div><label>自訂高度 mm</label><input id="customH" type="number" min="5" max="297" step="0.1" value="100"></div></div>
+      <label class="upload">③ 選擇或拍攝照片<input id="file" type="file" accept="image/*,.heic,.heif,image/heic,image/heif" multiple></label>
+    </div>
+    <div class="privacy"><b>✓</b><span>圖片只在你的瀏覽器本機處理，不會上傳。</span></div>
+
+    <section class="section" id="inspector">
+      <h2>選取文件設定</h2>
+      <div id="noSelection" class="hint">點選 A4 上的文件，即可調整尺寸與位置。</div>
+      <div id="selectionControls" hidden>
+        <label>這張照片的印出類型</label><select id="itemPreset"></select>
+        <div class="row" id="itemCustomSize" hidden><div><label>自訂寬度 mm</label><input id="w" type="number" min="5" max="210" step="0.1"></div><div><label>自訂高度 mm</label><input id="h" type="number" min="5" max="297" step="0.1"></div></div>
+        <div class="view-controls">
+          <label>框內顯示方式</label><select id="displayMode"><option value="cover">填滿列印框（可移動畫面）</option><option value="contain">完整顯示照片（可能留白）</option></select>
+          <label>圖片縮放 <span id="imageZoomLabel">100%</span></label><input id="imageZoom" type="range" min="100" max="300" value="100">
+          <div class="row"><div><label>左右位置</label><input id="imageX" type="range" min="0" max="100" value="50"></div><div><label>上下位置</label><input id="imageY" type="range" min="0" max="100" value="50"></div></div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="editCrop">裁切／編輯</button><button class="btn" id="rotate">旋轉版面</button>
+          <button class="btn" id="duplicate">複製一份</button><button class="btn" id="fit">移入可列印區</button>
+          <button class="btn danger wide" id="remove">刪除</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>排列與輸出</h2>
+      <div class="actions">
+        <button class="btn" id="auto">自動排列</button><button class="btn" id="clear">全部清除</button>
+        <button class="btn primary wide" id="print">列印／另存 PDF</button>
+      </div>
+      <label><input id="showCal" type="checkbox"> 列印 50 mm 校正尺</label>
+      <div class="status" id="status"></div>
+      <div class="hint">列印視窗請選擇與上方相同的紙張、比例 100%／實際大小，關閉「符合頁面」與頁首頁尾。首次使用可勾選校正尺，印出後量測是否正好 50 mm。</div>
+    </section>
+  </aside>
+
+  <section class="workspace" id="dropzone">
+    <div class="toolbar"><span id="paperLabel">A4 · 210 × 297 mm</span><div class="zoom"><span>預覽</span><input id="zoom" type="range" min="20" max="100" value="72"><b id="zoomLabel">72%</b></div></div>
+    <div class="stage"><div class="paper" id="paper">
+      <div class="safe"></div><div class="empty">將圖片拖到這裡<br>或從左側選擇圖片</div>
+      <div class="calibration" id="calibration"><div class="bar"></div><span>此線應為 50 mm</span></div>
+    </div></div>
+  </section>
+</main>
+<div class="crop-modal" id="cropModal" hidden>
+  <div class="crop-card">
+    <div class="crop-head"><h2>四角透視校正</h2><button class="btn" id="cancelCrop">取消</button></div>
+    <div class="crop-wrap" id="cropWrap"><canvas id="cropCanvas" width="800" height="520"></canvas></div>
+    <div class="crop-tools">
+      <button class="btn" id="autoCorners">自動偵測證件</button>
+      <button class="btn" id="cropRotate">旋轉 90°</button>
+      <button class="btn" id="cropReset">重設</button>
+      <button class="btn primary" id="applyCrop">拉正並套用</button>
+    </div>
+    <div class="crop-note">拖曳四個綠色圓點，分別對準證件的四個角落；套用後會自動拉正成平行矩形。</div>
+  </div>
+</div>
+<script>
+const $=s=>document.querySelector(s), paper=$('#paper'); let docs=[], selected=null, seq=0,paperW=210,paperH=297;
+const mm=n=>`${n}mm`, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function presetSize(){const v=$('#preset').value;return v==='custom'?[Number($('#customW').value)||100,Number($('#customH').value)||100]:v.split(',').map(Number)}
+function setStatus(t){$('#status').textContent=t;setTimeout(()=>{if($('#status').textContent===t)$('#status').textContent=''},3500)}
+function selectDoc(d){selected=d;docs.forEach(x=>x.el.classList.toggle('selected',x===d));$('#noSelection').hidden=!!d;$('#selectionControls').hidden=!d;if(d){$('#itemPreset').value=d.presetKey||'custom';$('#itemCustomSize').hidden=$('#itemPreset').value!=='custom';$('#w').value=d.w.toFixed(1);$('#h').value=d.h.toFixed(1);$('#displayMode').value=d.displayMode;$('#imageZoom').value=d.imageZoom;$('#imageZoomLabel').textContent=d.imageZoom+'%';$('#imageX').value=d.imageX;$('#imageY').value=d.imageY}}
+function render(d){d.el.style.left=mm(d.x);d.el.style.top=mm(d.y);d.el.style.width=mm(d.w);d.el.style.height=mm(d.h);const img=d.el.querySelector('img');img.style.objectFit=d.displayMode;img.style.objectPosition=`${d.imageX}% ${d.imageY}%`;img.style.transform=`scale(${d.imageZoom/100})`;d.el.querySelector('.tag').textContent=`${d.w.toFixed(1)} × ${d.h.toFixed(1)} mm`;paper.classList.toggle('has-docs',docs.length>0)}
+function addImage(src,name){const [w,h]=presetSize(),el=document.createElement('div');el.className='doc';el.innerHTML=`<div class="viewport"><img alt=""></div><span class="tag"></span>`;el.querySelector('img').src=src;paper.appendChild(el);const d={id:++seq,name,w,h,x:7+(docs.length%3)*6,y:10+(docs.length%5)*6,ratio:w/h,presetKey:$('#preset').value,el,originalSrc:src,displayMode:'cover',imageZoom:100,imageX:50,imageY:50};docs.push(d);bindDrag(d);render(d);selectDoc(d);autoArrange()}
+function loadScript(src,ready){return new Promise((resolve,reject)=>{if(ready())return resolve();const old=[...document.scripts].find(s=>s.src===src);if(old){old.addEventListener('load',resolve,{once:true});old.addEventListener('error',reject,{once:true});return}const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('無法載入 HEIC 解碼元件，請確認網路連線'));document.head.appendChild(s)})}
+function loadModernHeicDecoder(){return loadScript('https://cdn.jsdelivr.net/npm/heic-to@1.6.7/dist/iife/heic-to.js',()=>typeof window.HeicTo==='function')}
+function loadLegacyHeicDecoder(){return loadScript('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js',()=>typeof window.heic2any==='function')}
+function blobToDataURL(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob)})}
+function testImage(src){return new Promise((resolve,reject)=>{const i=new Image;i.onload=()=>resolve(src);i.onerror=reject;i.src=src})}
+async function decodeFile(file){const isHeic=/\.(heic|heif)$/i.test(file.name)||/image\/(heic|heif)/i.test(file.type);const native=await blobToDataURL(file);try{return await testImage(native)}catch(e){if(!isHeic)throw new Error(`${file.name} 無法讀取`)}let modernError=null;try{await loadModernHeicDecoder();const out=await window.HeicTo({blob:file,type:'image/jpeg',quality:.94});return await blobToDataURL(out)}catch(e){modernError=e}try{await loadLegacyHeicDecoder();let out=await window.heic2any({blob:file,toType:'image/jpeg',quality:.94});if(Array.isArray(out))out=out[0];return await blobToDataURL(out)}catch(e){console.error('HEIC decoders failed',modernError,e);throw new Error(`${file.name} 的 HEIC 編碼仍無法解析；請先在 Mac「預覽程式」匯出成 JPEG 後再上傳`)}}
+async function loadFiles(files){const valid=[...files].filter(f=>f.type.startsWith('image/')||/\.(heic|heif)$/i.test(f.name));for(const f of valid){try{setStatus(`正在處理 ${f.name}…`);const src=await decodeFile(f);addImage(src,f.name);setStatus(`${f.name} 已加入，可點選「裁切／編輯」`)}catch(err){setStatus(err.message||`${f.name} 讀取失敗`)}}}
+function bindDrag(d){d.el.addEventListener('pointerdown',e=>{selectDoc(d);d.el.setPointerCapture(e.pointerId);const sx=e.clientX,sy=e.clientY,ox=d.x,oy=d.y;const move=ev=>{const z=Number($('#zoom').value)/100;d.x=clamp(ox+(ev.clientX-sx)*25.4/96/z,0,paperW-d.w);d.y=clamp(oy+(ev.clientY-sy)*25.4/96/z,0,paperH-d.h);render(d)};const up=()=>{d.el.removeEventListener('pointermove',move);d.el.removeEventListener('pointerup',up)};d.el.addEventListener('pointermove',move);d.el.addEventListener('pointerup',up)})}
+function autoArrange(){let x=5,y=7,rowH=0;docs.forEach(d=>{if(x+d.w>paperW-5){x=5;y+=rowH+4;rowH=0}d.x=clamp(x,0,Math.max(0,paperW-d.w));d.y=clamp(y,0,Math.max(0,paperH-d.h));x+=d.w+4;rowH=Math.max(rowH,d.h);render(d)});setStatus('已依序自動排列')}
+$('#file').onchange=e=>{loadFiles(e.target.files);e.target.value=''};
+['dragenter','dragover'].forEach(n=>$('#dropzone').addEventListener(n,e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'}));$('#dropzone').addEventListener('drop',e=>{e.preventDefault();loadFiles(e.dataTransfer.files)});
+$('#zoom').oninput=e=>{document.documentElement.style.setProperty('--zoom',e.target.value/100);$('#zoomLabel').textContent=e.target.value+'%'};document.documentElement.style.setProperty('--zoom',.72);
+function setPreviewZoom(value){const n=Math.round(clamp(value,20,100));$('#zoom').value=n;$('#zoomLabel').textContent=n+'%';document.documentElement.style.setProperty('--zoom',n/100)}
+function updatePaper(){[paperW,paperH]=$('#paperSize').value.split(',').map(Number);document.documentElement.style.setProperty('--paper-w',paperW+'mm');document.documentElement.style.setProperty('--paper-h',paperH+'mm');$('#w').max=paperW;$('#h').max=paperH;$('#customW').max=paperW;$('#customH').max=paperH;let ps=$('#dynamicPageSize');if(!ps){ps=document.createElement('style');ps.id='dynamicPageSize';document.head.appendChild(ps)}ps.textContent=`@page{size:${paperW}mm ${paperH}mm;margin:0}`;const name=$('#paperSize').selectedOptions[0].textContent.split('（')[0].trim();$('#paperLabel').textContent=`${name} · ${paperW} × ${paperH} mm`;docs.forEach(d=>{d.w=Math.min(d.w,paperW);d.h=Math.min(d.h,paperH);d.x=clamp(d.x,0,paperW-d.w);d.y=clamp(d.y,0,paperH-d.h);render(d)});if(innerWidth<=800)setPreviewZoom((innerWidth-28)/(paperW*96/25.4)*100);autoArrange()}
+$('#paperSize').onchange=updatePaper;$('#preset').onchange=e=>$('#customPreset').hidden=e.target.value!=='custom';window.addEventListener('resize',()=>{if(innerWidth<=800)setPreviewZoom((innerWidth-28)/(paperW*96/25.4)*100)});updatePaper();
+function changeSize(axis,val){if(!selected)return;val=clamp(Number(val)||5,5,axis==='w'?paperW:paperH);selected[axis]=val;selected.x=clamp(selected.x,0,paperW-selected.w);selected.y=clamp(selected.y,0,paperH-selected.h);render(selected);selectDoc(selected)}
+$('#w').onchange=e=>changeSize('w',e.target.value);$('#h').onchange=e=>changeSize('h',e.target.value);
+$('#itemPreset').innerHTML=$('#preset').innerHTML;
+$('#itemPreset').onchange=e=>{if(!selected)return;selected.presetKey=e.target.value;const custom=e.target.value==='custom';$('#itemCustomSize').hidden=!custom;if(!custom){const [w,h]=e.target.value.split(',').map(Number);selected.w=Math.min(w,paperW);selected.h=Math.min(h,paperH);selected.ratio=selected.w/selected.h;selected.x=clamp(selected.x,0,paperW-selected.w);selected.y=clamp(selected.y,0,paperH-selected.h);render(selected);autoArrange();selectDoc(selected)}else{$('#w').value=selected.w.toFixed(1);$('#h').value=selected.h.toFixed(1)}};
+function updateImageView(){if(!selected)return;selected.displayMode=$('#displayMode').value;selected.imageZoom=Number($('#imageZoom').value);selected.imageX=Number($('#imageX').value);selected.imageY=Number($('#imageY').value);$('#imageZoomLabel').textContent=selected.imageZoom+'%';render(selected)}
+['displayMode','imageZoom','imageX','imageY'].forEach(id=>$('#'+id).addEventListener('input',updateImageView));
+$('#rotate').onclick=()=>{if(!selected)return;[selected.w,selected.h]=[selected.h,selected.w];selected.ratio=selected.w/selected.h;render(selected);selectDoc(selected)};
+$('#duplicate').onclick=()=>{if(!selected)return;const d=selected,el=d.el.cloneNode(true);el.classList.remove('selected');paper.appendChild(el);const c={...d,id:++seq,x:clamp(d.x+6,0,paperW-d.w),y:clamp(d.y+6,0,paperH-d.h),el};docs.push(c);bindDrag(c);render(c);selectDoc(c)};
+$('#remove').onclick=()=>{if(!selected)return;selected.el.remove();docs=docs.filter(d=>d!==selected);selectDoc(null);paper.classList.toggle('has-docs',docs.length>0)};
+$('#fit').onclick=()=>{if(!selected)return;selected.x=clamp(selected.x,5,Math.max(5,paperW-5-selected.w));selected.y=clamp(selected.y,5,Math.max(5,paperH-5-selected.h));render(selected)};
+$('#auto').onclick=autoArrange;$('#clear').onclick=()=>{if(docs.length&&!confirm('確定清除所有文件？'))return;docs.forEach(d=>d.el.remove());docs=[];selectDoc(null);paper.classList.remove('has-docs')};
+$('#showCal').onchange=e=>$('#calibration').classList.toggle('show',e.target.checked);
+$('#print').onclick=()=>{selectDoc(null);setStatus('請在列印設定選擇 100%／實際大小');setTimeout(()=>window.print(),100)};
+paper.addEventListener('pointerdown',e=>{if(e.target===paper)selectDoc(null)});
+
+const crop={doc:null,img:null,points:[],active:-1,view:null},cc=$('#cropCanvas'),cx=cc.getContext('2d');
+function resetCorners(){const v=crop.view,m=16;crop.points=[{x:v.x+m,y:v.y+m},{x:v.x+v.w-m,y:v.y+m},{x:v.x+v.w-m,y:v.y+v.h-m},{x:v.x+m,y:v.y+v.h-m}];drawCrop()}
+function drawCrop(){if(!crop.img)return;cx.clearRect(0,0,cc.width,cc.height);cx.fillStyle='#202823';cx.fillRect(0,0,cc.width,cc.height);const sc=Math.min((cc.width-24)/crop.img.width,(cc.height-24)/crop.img.height),w=crop.img.width*sc,h=crop.img.height*sc,x=(cc.width-w)/2,y=(cc.height-h)/2;crop.view={x,y,w,h,sc};cx.drawImage(crop.img,x,y,w,h);if(!crop.points.length)resetCorners();cx.save();cx.fillStyle='#0007';cx.beginPath();cx.rect(0,0,cc.width,cc.height);cx.moveTo(crop.points[0].x,crop.points[0].y);crop.points.slice(1).forEach(p=>cx.lineTo(p.x,p.y));cx.closePath();cx.fill('evenodd');cx.strokeStyle='#24d487';cx.lineWidth=3;cx.beginPath();crop.points.forEach((p,i)=>i?cx.lineTo(p.x,p.y):cx.moveTo(p.x,p.y));cx.closePath();cx.stroke();crop.points.forEach((p,i)=>{cx.beginPath();cx.arc(p.x,p.y,11,0,Math.PI*2);cx.fillStyle='#fff';cx.fill();cx.lineWidth=5;cx.strokeStyle='#159463';cx.stroke();cx.fillStyle='#159463';cx.font='bold 11px sans-serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(String(i+1),p.x,p.y)});cx.restore()}
+function openCrop(){if(!selected)return;crop.doc=selected;crop.points=[];crop.img=new Image;crop.img.onload=()=>{$('#cropModal').hidden=false;drawCrop()};crop.img.src=selected.originalSrc||selected.el.querySelector('img').src}
+$('#editCrop').onclick=openCrop;$('#cancelCrop').onclick=()=>$('#cropModal').hidden=true;$('#cropReset').onclick=()=>resetCorners();
+$('#cropRotate').onclick=()=>{const t=document.createElement('canvas');t.width=crop.img.height;t.height=crop.img.width;const g=t.getContext('2d');g.translate(t.width,0);g.rotate(Math.PI/2);g.drawImage(crop.img,0,0);const n=new Image;n.onload=()=>{crop.img=n;crop.points=[];drawCrop()};n.src=t.toDataURL('image/jpeg',.95)};
+function pointerPos(e){const r=cc.getBoundingClientRect();return{x:(e.clientX-r.left)*cc.width/r.width,y:(e.clientY-r.top)*cc.height/r.height}}
+cc.addEventListener('pointerdown',e=>{const p=pointerPos(e);let nearest=0,dist=Infinity;crop.points.forEach((q,i)=>{const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<dist){dist=d;nearest=i}});crop.active=dist<=35?nearest:-1;if(crop.active>=0)cc.setPointerCapture(e.pointerId)});cc.addEventListener('pointermove',e=>{if(crop.active<0)return;const p=pointerPos(e),v=crop.view;crop.points[crop.active]={x:clamp(p.x,v.x,v.x+v.w),y:clamp(p.y,v.y,v.y+v.h)};drawCrop()});cc.addEventListener('pointerup',()=>crop.active=-1);
+function orderPoints(a){const s=[...a];const tl=s.reduce((u,p)=>p.x+p.y<u.x+u.y?p:u,s[0]),br=s.reduce((u,p)=>p.x+p.y>u.x+u.y?p:u,s[0]),tr=s.reduce((u,p)=>p.x-p.y>u.x-u.y?p:u,s[0]),bl=s.reduce((u,p)=>p.x-p.y<u.x-u.y?p:u,s[0]);return[tl,tr,br,bl]}
+function solve(A,b){for(let i=0;i<b.length;i++){let m=i;for(let j=i+1;j<b.length;j++)if(Math.abs(A[j][i])>Math.abs(A[m][i]))m=j;[A[i],A[m]]=[A[m],A[i]];[b[i],b[m]]=[b[m],b[i]];const d=A[i][i];if(Math.abs(d)<1e-10)throw Error('無法計算透視');for(let k=i;k<A[i].length;k++)A[i][k]/=d;b[i]/=d;for(let j=0;j<b.length;j++)if(j!==i){const f=A[j][i];for(let k=i;k<A[j].length;k++)A[j][k]-=f*A[i][k];b[j]-=f*b[i]}}return b}
+function homography(dst,src){const A=[],b=[];for(let i=0;i<4;i++){const x=dst[i].x,y=dst[i].y,u=src[i].x,v=src[i].y;A.push([x,y,1,0,0,0,-u*x,-u*y]);b.push(u);A.push([0,0,0,x,y,1,-v*x,-v*y]);b.push(v)}return solve(A,b)}
+function perspectiveImage(){const v=crop.view,src=orderPoints(crop.points).map(p=>({x:(p.x-v.x)/v.sc,y:(p.y-v.y)/v.sc})),top=Math.hypot(src[1].x-src[0].x,src[1].y-src[0].y),bottom=Math.hypot(src[2].x-src[3].x,src[2].y-src[3].y),left=Math.hypot(src[3].x-src[0].x,src[3].y-src[0].y),right=Math.hypot(src[2].x-src[1].x,src[2].y-src[1].y),ratio=crop.doc.w/crop.doc.h;let ow=1400,oh=Math.round(ow/ratio);if(ratio<1){oh=1400;ow=Math.round(oh*ratio)}const source=document.createElement('canvas');source.width=crop.img.width;source.height=crop.img.height;source.getContext('2d').drawImage(crop.img,0,0);const sd=source.getContext('2d').getImageData(0,0,source.width,source.height),out=document.createElement('canvas');out.width=ow;out.height=oh;const od=out.getContext('2d').createImageData(ow,oh),H=homography([{x:0,y:0},{x:ow-1,y:0},{x:ow-1,y:oh-1},{x:0,y:oh-1}],src);for(let y=0;y<oh;y++)for(let x=0;x<ow;x++){const z=H[6]*x+H[7]*y+1,sx=(H[0]*x+H[1]*y+H[2])/z,sy=(H[3]*x+H[4]*y+H[5])/z,ix=clamp(Math.round(sx),0,source.width-1),iy=clamp(Math.round(sy),0,source.height-1),si=(iy*source.width+ix)*4,di=(y*ow+x)*4;od.data[di]=sd.data[si];od.data[di+1]=sd.data[si+1];od.data[di+2]=sd.data[si+2];od.data[di+3]=255}out.getContext('2d').putImageData(od,0,0);return out.toDataURL('image/jpeg',.95)}
+$('#applyCrop').onclick=()=>{try{setStatus('正在拉正證件…');const src=perspectiveImage();crop.doc.el.querySelector('img').src=src;crop.doc.originalSrc=src;$('#cropModal').hidden=true;setStatus('已完成四角透視校正')}catch(e){setStatus(e.message||'透視校正失敗')}};
+function loadOpenCV(){return new Promise((resolve,reject)=>{if(window.cv&&window.cv.Mat)return resolve(window.cv);const done=()=>{const started=Date.now(),timer=setInterval(async()=>{try{if(window.cv){window.cv=await window.cv;if(window.cv.Mat){clearInterval(timer);resolve(window.cv)}}if(Date.now()-started>20000){clearInterval(timer);reject(Error('自動偵測元件載入逾時'))}}catch(e){}},100)};const old=[...document.scripts].find(s=>s.src.includes('opencv.js'));if(old)return done();const s=document.createElement('script');s.src='https://docs.opencv.org/4.x/opencv.js';s.async=true;s.onload=done;s.onerror=()=>reject(Error('無法載入自動偵測元件'));document.head.appendChild(s)})}
+$('#autoCorners').onclick=async()=>{const btn=$('#autoCorners'),old=btn.textContent;btn.disabled=true;btn.textContent='偵測中…';try{const cv=await loadOpenCV(),scan=document.createElement('canvas');scan.width=cc.width;scan.height=cc.height;const sg=scan.getContext('2d'),v=crop.view;sg.fillStyle='#202823';sg.fillRect(0,0,scan.width,scan.height);sg.drawImage(crop.img,v.x,v.y,v.w,v.h);const src=cv.imread(scan),gray=new cv.Mat(),blur=new cv.Mat(),edge=new cv.Mat(),contours=new cv.MatVector(),hier=new cv.Mat();cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);cv.GaussianBlur(gray,blur,new cv.Size(5,5),0);cv.Canny(blur,edge,55,160);cv.findContours(edge,contours,hier,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE);let best=null,bestArea=cc.width*cc.height*.05;for(let i=0;i<contours.size();i++){const c=contours.get(i),peri=cv.arcLength(c,true),a=new cv.Mat();cv.approxPolyDP(c,a,.025*peri,true);const area=Math.abs(cv.contourArea(a));if(a.rows===4&&area>bestArea&&cv.isContourConvex(a)){bestArea=area;best=[];for(let j=0;j<4;j++)best.push({x:a.intPtr(j,0)[0],y:a.intPtr(j,0)[1]})}c.delete();a.delete()}[src,gray,blur,edge,contours,hier].forEach(x=>x.delete());if(!best)throw Error('未偵測到完整四邊，請手動拖曳四個角');crop.points=orderPoints(best);drawCrop();setStatus('已自動找到證件邊緣，可再微調四角')}catch(e){setStatus(e.message||'自動偵測失敗，請手動調整四角')}finally{btn.disabled=false;btn.textContent=old}};
+</script>
+</body></html>
