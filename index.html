@@ -9,14 +9,17 @@
     *{box-sizing:border-box}[hidden]{display:none!important} body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
     button,input,select{font:inherit} button{cursor:pointer}
     label{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0;flex:1}
-    select,input[type=number]{width:100%;border:1px solid #cbd3ce;background:#fff;border-radius:9px;padding:9px;color:var(--ink)}
+    select,input[type=number],.dimension-input{width:100%;border:1px solid #cbd3ce;background:#fff;border-radius:9px;padding:9px;color:var(--ink)}
     .upload{display:block;text-align:center;padding:13px;border:1px dashed var(--brand);background:var(--brand2);color:var(--brand);border-radius:11px;font-weight:700;cursor:pointer}.upload input{display:none}
     .btn{border:1px solid #cbd3ce;background:#fff;border-radius:9px;padding:9px 10px;color:var(--ink)}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}.btn.danger{color:var(--danger)}
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions .wide{grid-column:1/-1}
     .hint{background:#eef4f0;border-radius:10px;padding:10px;font-size:12px;line-height:1.55;color:#4e5c55}.privacy{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:var(--muted);margin-top:12px}.privacy b{color:var(--brand)}
     .stage{width:calc(var(--paper-w) * var(--zoom));height:calc(var(--paper-h) * var(--zoom));position:relative;margin-bottom:40px}
     .paper{position:absolute;left:0;top:0;width:var(--paper-w);height:var(--paper-h);background:var(--paper);box-shadow:0 14px 45px #1a262129;transform:scale(var(--zoom));transform-origin:top left;overflow:hidden}
-    .safe{position:absolute;inset:5mm;border:.25mm dashed #bfc8c2;pointer-events:none}.safe::before{content:"建議安全邊界 5 mm";position:absolute;top:1mm;left:2mm;color:#adb6b0;font-size:2.7mm}
+    .safe{position:absolute;inset:5mm;border:calc(1.5px / var(--zoom)) dashed #39725b;z-index:1;pointer-events:none}
+    .safe-legend{display:flex;align-items:center;justify-content:center;gap:8px;margin:7px 0 0;color:#24503e;font-size:13px;font-weight:700}
+    .safe-legend::before{content:"";width:21px;border-top:2px dashed #39725b}
+    body[data-step="3"] .safe-legend{display:none}
     .doc{position:absolute;touch-action:none;user-select:none;border:.35mm solid transparent;background:#f3f3f3;cursor:move}.doc.selected{border-color:#159463;box-shadow:0 0 0 .7mm #15946333}.doc .viewport{width:100%;height:100%;overflow:hidden;position:relative}.doc img{width:100%;height:100%;display:block;object-fit:cover;pointer-events:none;transform-origin:center}.doc .tag{display:none;position:absolute;bottom:100%;left:-.35mm;background:#159463;color:#fff;font-size:2.7mm;padding:.7mm 1.3mm;white-space:nowrap}.doc.selected .tag{display:block}
     .resize-handle{display:none;position:absolute;width:var(--handle-size);height:var(--handle-size);background:#fff;border:.8mm solid #159463;border-radius:50%;z-index:5;touch-action:none;box-shadow:0 0 0 .8mm #15946333;transform:translate(-50%,-50%)}.doc.selected .resize-handle{display:block}.resize-handle.nw{left:0;top:0;cursor:nwse-resize}.resize-handle.ne{left:100%;top:0;cursor:nesw-resize}.resize-handle.sw{left:0;top:100%;cursor:nesw-resize}.resize-handle.se{left:100%;top:100%;cursor:nwse-resize}
     .watermark{display:none;position:absolute;left:50%;top:50%;max-width:90%;padding:1.5mm 3mm;border:.65mm solid currentColor;border-radius:2mm;transform:translate(-50%,-50%) rotate(-12deg);font-weight:900;line-height:1.15;text-align:center;white-space:normal;overflow-wrap:anywhere;pointer-events:none;z-index:2}.watermark.show{display:block}.watermark.gray{border-radius:0;border-width:.35mm}
@@ -55,7 +58,12 @@
     .rotate-icon{display:inline-flex;vertical-align:middle}.rotate-icon svg{width:18px;height:18px}
     .view-controls label:has(+ input:disabled){opacity:.55}
     .view-controls input[type=range]:disabled{opacity:.45;cursor:default}
-    @media print{html,body{width:var(--paper-w);height:var(--paper-h);margin:0;background:white}.mast,.progress,.page-head,.edit-tools,.summary,.toolbar,.page-actions,.output-note,.status,.crop-modal,.safe,.tag,.empty,.resize-handle{display:none!important}.app,.page:not([hidden]),.work-grid,.preview-slot,.workspace,.stage{display:block;width:var(--paper-w);height:var(--paper-h);margin:0!important;padding:0!important;border:0!important;overflow:hidden}.paper{transform:none;box-shadow:none}.doc,.doc.selected{box-shadow:none;border-color:transparent}}
+    .paper-direction{display:flex;gap:10px;border:0;margin:15px 0 0;padding:0}
+    .paper-direction legend{font-weight:700;font-size:14px}
+    .paper-direction label{display:flex;align-items:center;gap:5px;min-height:44px;border:1px solid var(--line);border-radius:9px;padding:6px 12px;background:white;font-size:14px;cursor:pointer}
+    .paper-direction label:has(:checked){background:var(--brand2);border-color:var(--brand)}
+    .watermark.show{display:block;width:100%;height:100%;inset:0;max-width:none;padding:0;border:0;border-radius:0;transform:none}
+    @media print{html,body{width:var(--paper-w);height:var(--paper-h);margin:0;background:white}.mast,.progress,.page-head,.edit-tools,.summary,.toolbar,.page-actions,.output-note,.status,.crop-modal,.safe,.safe-legend,.tag,.empty,.resize-handle{display:none!important}.app,.page:not([hidden]),.work-grid,.preview-slot,.workspace,.stage{display:block;width:var(--paper-w);height:var(--paper-h);margin:0!important;padding:0!important;border:0!important;overflow:hidden}.paper{transform:none;box-shadow:none}.doc,.doc.selected{box-shadow:none;border-color:transparent}}
   </style>
 </head>
 <body>
@@ -82,6 +90,11 @@
         <option value="215.9,279.4">Letter（215.9 × 279.4 mm）</option>
       </select>
     <div class="paper-options" id="paperOptions" role="group" aria-label="紙張尺寸"></div>
+    <fieldset class="paper-direction">
+      <legend>紙張方向</legend>
+      <label><input type="radio" name="paperDirection" value="portrait" checked> 直式</label>
+      <label><input type="radio" name="paperDirection" value="landscape"> 橫式</label>
+    </fieldset>
     <div class="page-actions"><button class="btn primary" type="button" data-go="2">開始排版 <span aria-hidden="true">→</span></button></div>
   </section>
   <section class="page" id="step2" aria-labelledby="title2" hidden>
@@ -113,7 +126,7 @@
         </optgroup>
         <option value="custom">自訂印出長寬</option>
       </select>
-      <div class="row" id="customPreset" hidden><div><label>自訂寬度 mm</label><input id="customW" type="number" min="5" max="215.9" step="0.1" value="100"></div><div><label>自訂高度 mm</label><input id="customH" type="number" min="5" max="297" step="0.1" value="100"></div></div>
+      <div class="row" id="customPreset" hidden><div><label for="customW">自訂寬度 mm</label><input id="customW" class="dimension-input" type="text" inputmode="decimal" enterkeyhint="next" value="100"></div><div><label for="customH">自訂高度 mm</label><input id="customH" class="dimension-input" type="text" inputmode="decimal" enterkeyhint="done" value="100"></div></div>
           <label class="upload" for="file"><span aria-hidden="true">＋</span> 選擇圖片<input id="file" type="file" accept="image/*,.heic,.heif,image/heic,image/heif" multiple></label>
           <p class="small">可一次選多張，也可再加入。支援照片與證件圖片。</p>
         </div>
@@ -135,8 +148,8 @@
         <div class="sheet-tab-panel active" data-sheet-panel="size">
           <label for="itemPreset">印出尺寸</label><select id="itemPreset"></select>
           <div class="row" id="itemCustomSize" hidden>
-            <div><label for="w">寬度（mm）</label><input id="w" type="number" min="5" step="0.1"></div>
-            <div><label for="h">高度（mm）</label><input id="h" type="number" min="5" step="0.1"></div>
+            <div><label for="w">寬度（mm）</label><input id="w" class="dimension-input" type="text" inputmode="decimal" enterkeyhint="next"></div>
+            <div><label for="h">高度（mm）</label><input id="h" class="dimension-input" type="text" inputmode="decimal" enterkeyhint="done"></div>
           </div>
           <details class="tool-block position-tools">
             <summary class="tool-title">紙上位置</summary>
@@ -174,13 +187,16 @@
         <div class="sheet-tab-panel" data-sheet-panel="stamp">
           <div class="view-controls">
               <label><input id="watermarkEnabled" type="checkbox"> 顯示浮水印</label>
-              <div class="watermark-row"><div><label for="watermarkText">浮水印文字</label><input id="watermarkText" type="text" maxlength="30" placeholder="例如：僅供申請使用"></div><div><label for="watermarkStyle">樣式</label><select id="watermarkStyle" aria-label="浮水印樣式"><option value="stamp">紅色印章</option><option value="gray">灰色浮水印</option></select></div></div>
-              <label for="watermarkDirection">文字方向</label><select id="watermarkDirection"><option value="horizontal">橫式</option><option value="vertical">直式</option></select>
-              <label for="watermarkOpacity" class="control-label"><span>透明度</span><b id="watermarkOpacityLabel">55%</b></label><input id="watermarkOpacity" type="range" min="15" max="100" value="55">
-              <label for="watermarkSize" class="control-label"><span>文字大小</span><b id="watermarkSizeLabel">18</b></label><input id="watermarkSize" type="range" min="10" max="36" value="18">
-              <div class="row"><div><label for="watermarkX" class="control-label"><span>左右位置</span><b id="watermarkXLabel">50%</b></label><input id="watermarkX" type="range" min="0" max="100" value="50"></div><div><label for="watermarkY" class="control-label"><span>上下位置</span><b id="watermarkYLabel">50%</b></label><input id="watermarkY" type="range" min="0" max="100" value="50"></div></div>
+              <div class="watermark-row"><div><label for="watermarkText">浮水印文字</label><input id="watermarkText" type="text" maxlength="30" placeholder="例如：僅供申請使用"></div></div>
               <label>快速套用</label>
               <div class="example-buttons"><button type="button" data-watermark="僅供申請使用">僅供申請使用</button><button type="button" data-watermark="僅供身分驗證">僅供身分驗證</button><button type="button" data-watermark="與正本相符">與正本相符</button><button type="button" data-watermark="COPY">COPY</button></div>
+              <label for="watermarkStyle">樣式</label><select id="watermarkStyle" aria-label="浮水印樣式"><option value="stamp">紅色印章</option><option value="gray">灰色浮水印</option></select>
+              <label for="watermarkDirection">文字排列</label><select id="watermarkDirection"><option value="horizontal">橫式</option><option value="vertical">直式</option></select>
+              <label for="watermarkAngle" class="control-label"><span>印章角度</span><b id="watermarkAngleLabel">0°</b></label><input id="watermarkAngle" type="range" min="-180" max="180" step="1" value="0">
+              <label for="watermarkOpacity" class="control-label"><span>透明度</span><b id="watermarkOpacityLabel">55%</b></label><input id="watermarkOpacity" type="range" min="15" max="100" value="55">
+              <label for="watermarkSize" class="control-label"><span>文字大小（相片短邊）</span><b id="watermarkSizeLabel">10%</b></label><input id="watermarkSize" type="range" min="3" max="60" value="10">
+              <div class="row"><div><label for="watermarkX" class="control-label"><span>左右位置</span><b id="watermarkXLabel">50%</b></label><input id="watermarkX" type="range" min="0" max="100" value="50"></div><div><label for="watermarkY" class="control-label"><span>上下位置</span><b id="watermarkYLabel">50%</b></label><input id="watermarkY" type="range" min="0" max="100" value="50"></div></div>
+
           </div>
         </div>
         <div class="actions">
@@ -197,6 +213,7 @@
       <div class="safe"></div><div class="empty">加入圖片後<br>會顯示在這裡</div>
       <div class="calibration" id="calibration"><div class="bar"></div><span>此線應為 50 mm</span></div>
     </div></div>
+    <p class="safe-legend">建議安全邊界 5 mm</p>
   </section>
       </div>
     </div>
@@ -208,6 +225,7 @@
       <div class="card summary">
         <h3>紙張設定</h3>
         <dl><div><dt>紙張</dt><dd id="summaryPaper"></dd></div><div><dt>尺寸</dt><dd id="summarySize"></dd></div><div><dt>文件</dt><dd id="summaryCount"></dd></div><div><dt>格式</dt><dd>PDF · 300 DPI</dd></div></dl>
+        <p class="hint" id="outputOverflow" role="status" hidden>有照片超出紙張，超出的部分不會印出。可返回排版調整。</p>
         <label class="check"><input id="showCal" type="checkbox"> 加入 50 mm 校正尺</label>
         <p class="small">列印時選「實際大小」或「100%」，才能保留原尺寸。</p>
       </div>
@@ -233,11 +251,11 @@
 <script>
 const $=s=>document.querySelector(s), paper=$('#paper'); let docs=[], selected=null, seq=0,paperW=210,paperH=297;
 const mm=n=>`${n}mm`, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function presetSize(){const v=$('#preset').value;return v==='custom'?[Number($('#customW').value)||100,Number($('#customH').value)||100]:v.split(',').map(Number)}
+function presetSize(){const v=$('#preset').value;return v==='custom'?[readDimension($('#customW').value,100),readDimension($('#customH').value,100)]:v.split(',').map(Number)}
 function setStatus(t){$('#status').textContent=t;setTimeout(()=>{if($('#status').textContent===t)$('#status').textContent=''},3500)}
-function selectDoc(d,scroll=false){selected=d;refreshList();docs.forEach(x=>x.el.classList.toggle('selected',x===d));$('#noSelection').hidden=!!d;$('#selectionControls').hidden=!d;$('#inspector').classList.toggle('editing',!!d);$('#inspector').classList.remove('collapsed');document.body.classList.toggle('mobile-editing',!!d);if(!d)return;syncPosition(d);syncFrameControls(d);$('#itemPreset').value=d.presetKey||'custom';$('#itemCustomSize').hidden=$('#itemPreset').value!=='custom';$('#w').value=d.w.toFixed(1);$('#h').value=d.h.toFixed(1);$('#displayMode').value=d.displayMode;$('#imageZoom').value=d.imageZoom;$('#imageZoomLabel').textContent=d.imageZoom+'%';$('#imageX').value=d.imageX;$('#imageY').value=d.imageY;['exposure','contrast','sharpness','saturation'].forEach(k=>{$('#'+k).value=d[k];$('#'+k+'Label').textContent=(d[k]>0?'+':'')+d[k]});$('#watermarkEnabled').checked=d.watermarkEnabled;$('#watermarkText').value=d.watermarkText;$('#watermarkStyle').value=d.watermarkStyle;$('#watermarkDirection').value=d.watermarkDirection;['watermarkOpacity','watermarkSize','watermarkX','watermarkY'].forEach(k=>{$('#'+k).value=d[k];$('#'+k+'Label').textContent=d[k]+(k==='watermarkSize'?'':'%')});if(scroll&&innerWidth<=800)requestAnimationFrame(()=>d.el.scrollIntoView({block:'center',behavior:'smooth'}))}
-function render(d){if(d===selected){syncPosition(d);syncFrameControls(d)}d.el.style.left=mm(d.x);d.el.style.top=mm(d.y);d.el.style.width=mm(d.w);d.el.style.height=mm(d.h);const img=d.el.querySelector('img');img.style.objectFit=d.displayMode;img.style.objectPosition=`${d.imageX}% ${d.imageY}%`;img.style.transformOrigin=img.style.objectPosition;img.style.transform=`scale(${d.imageZoom/100})`;img.style.filter=`brightness(${100+d.exposure}%) contrast(${100+d.contrast+d.sharpness*.12}%) saturate(${100+d.saturation}%)`;const wm=d.el.querySelector('.watermark');wm.textContent=d.watermarkText;wm.className=`watermark ${d.watermarkEnabled&&d.watermarkText?'show':''} ${d.watermarkStyle==='gray'?'gray':''}`;wm.style.left=d.watermarkX+'%';wm.style.top=d.watermarkY+'%';wm.style.transform=`translate(-50%,-50%) rotate(${d.watermarkDirection==='vertical'?78:-12}deg)`;wm.style.color=d.watermarkStyle==='gray'?'#222':'#b01818';wm.style.opacity=d.watermarkOpacity/100;wm.style.fontSize=mm(Math.max(2.6,d.watermarkSize*.22));d.el.querySelector('.tag').textContent=`${d.w.toFixed(1)} × ${d.h.toFixed(1)} mm`;paper.classList.toggle('has-docs',docs.length>0)}
-function addImage(src,name,preset){const [w,h]=preset.size,el=document.createElement('div');el.className='doc';el.innerHTML=`<div class="viewport"><img alt=""><span class="watermark"></span></div><span class="tag"></span><i class="resize-handle nw" data-corner="nw"></i><i class="resize-handle ne" data-corner="ne"></i><i class="resize-handle sw" data-corner="sw"></i><i class="resize-handle se" data-corner="se"></i>`;el.querySelector('img').src=src;paper.appendChild(el);const d={id:++seq,name,w,h,...findSpace(w,h),ratio:w/h,presetKey:preset.key,el,originalSrc:src,displayMode:'cover',imageZoom:100,imageX:50,imageY:50,exposure:0,contrast:0,sharpness:0,saturation:0,watermarkEnabled:false,watermarkText:'',watermarkStyle:'stamp',watermarkDirection:'horizontal',watermarkOpacity:55,watermarkSize:18,watermarkX:50,watermarkY:50};docs.push(d);bindDrag(d);bindResize(d);render(d);selectDoc(d);return d.overlap}
+function selectDoc(d,scroll=false){selected=d;refreshList();docs.forEach(x=>x.el.classList.toggle('selected',x===d));$('#noSelection').hidden=!!d;$('#selectionControls').hidden=!d;$('#inspector').classList.toggle('editing',!!d);$('#inspector').classList.remove('collapsed');document.body.classList.toggle('mobile-editing',!!d);if(!d)return;syncPosition(d);syncFrameControls(d);$('#itemPreset').value=d.presetKey||'custom';$('#itemCustomSize').hidden=$('#itemPreset').value!=='custom';$('#w').value=d.w.toFixed(1);$('#h').value=d.h.toFixed(1);$('#displayMode').value=d.displayMode;$('#imageZoom').value=d.imageZoom;$('#imageZoomLabel').textContent=d.imageZoom+'%';$('#imageX').value=d.imageX;$('#imageY').value=d.imageY;['exposure','contrast','sharpness','saturation'].forEach(k=>{$('#'+k).value=d[k];$('#'+k+'Label').textContent=(d[k]>0?'+':'')+d[k]});$('#watermarkEnabled').checked=d.watermarkEnabled;$('#watermarkText').value=d.watermarkText;$('#watermarkStyle').value=d.watermarkStyle;$('#watermarkDirection').value=d.watermarkDirection;$('#watermarkAngle').value=d.watermarkAngle;$('#watermarkAngleLabel').textContent=d.watermarkAngle+'°';['watermarkOpacity','watermarkSize','watermarkX','watermarkY'].forEach(k=>{$('#'+k).value=d[k];$('#'+k+'Label').textContent=d[k]+'%'});if(scroll&&innerWidth<=800)requestAnimationFrame(()=>d.el.scrollIntoView({block:'center',behavior:'smooth'}))}
+function render(d){if(d===selected){syncPosition(d);syncFrameControls(d)}d.el.style.left=mm(d.x);d.el.style.top=mm(d.y);d.el.style.width=mm(d.w);d.el.style.height=mm(d.h);const img=d.el.querySelector('img');img.style.objectFit=d.displayMode;img.style.objectPosition=`${d.imageX}% ${d.imageY}%`;img.style.transformOrigin=img.style.objectPosition;img.style.transform=`scale(${d.imageZoom/100})`;img.style.filter=`brightness(${100+d.exposure}%) contrast(${100+d.contrast+d.sharpness*.12}%) saturate(${100+d.saturation}%)`;renderWatermark(d);d.el.querySelector('.tag').textContent=`${d.w.toFixed(1)} × ${d.h.toFixed(1)} mm`;paper.classList.toggle('has-docs',docs.length>0)}
+function addImage(src,name,preset){const [w,h]=preset.size,el=document.createElement('div');el.className='doc';el.innerHTML=`<div class="viewport"><img alt=""><canvas class="watermark" aria-hidden="true"></canvas></div><span class="tag"></span><i class="resize-handle nw" data-corner="nw"></i><i class="resize-handle ne" data-corner="ne"></i><i class="resize-handle sw" data-corner="sw"></i><i class="resize-handle se" data-corner="se"></i>`;el.querySelector('img').src=src;paper.appendChild(el);const d={id:++seq,name,w,h,...findSpace(w,h),ratio:w/h,presetKey:preset.key,el,originalSrc:src,displayMode:'cover',imageZoom:100,imageX:50,imageY:50,exposure:0,contrast:0,sharpness:0,saturation:0,watermarkEnabled:false,watermarkText:'',watermarkStyle:'stamp',watermarkDirection:'horizontal',watermarkOpacity:55,watermarkSize:10,watermarkAngle:0,watermarkX:50,watermarkY:50};docs.push(d);bindDrag(d);bindResize(d);render(d);selectDoc(d);return d.overlap}
 function loadScript(src,ready){return new Promise((resolve,reject)=>{if(ready())return resolve();const old=[...document.scripts].find(s=>s.src===src);if(old){old.addEventListener('load',resolve,{once:true});old.addEventListener('error',reject,{once:true});return}const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('無法載入 HEIC 解碼元件，請確認網路連線'));document.head.appendChild(s)})}
 function loadModernHeicDecoder(){return loadScript('https://cdn.jsdelivr.net/npm/heic-to@1.6.7/dist/iife/heic-to.js',()=>typeof window.HeicTo==='function')}
 function loadLegacyHeicDecoder(){return loadScript('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js',()=>typeof window.heic2any==='function')}
@@ -247,8 +265,7 @@ async function decodeFile(file){const isHeic=/\.(heic|heif)$/i.test(file.name)||
 async function loadFiles(files){
   const valid=[...files].filter(f=>f.type.startsWith('image/')||/\.(heic|heif|jpe?g|png|webp|gif|bmp|avif|svg)$/i.test(f.name));
   if(!valid.length){setStatus('請選擇圖片檔');return}
-  const original=presetSize().map(n=>Math.max(5,n)),scale=Math.min(1,paperW/original[0],paperH/original[1]);
-  const preset={size:original.map(n=>Math.max(5,n*scale)),key:scale<1?'custom':$('#preset').value};
+  const preset={size:presetSize().map(n=>Math.max(5,n)),key:$('#preset').value};
   importing++;syncSteps();
   let added=0,failed=0,overlap=false;
   try{
@@ -266,7 +283,7 @@ function findSpace(w,h){
     const px=w<=paperW-10?Math.max(x,5):x,py=h<=paperH-12?Math.max(y,7):y;
     if(px+w<=paperW && py+h<=paperH && docs.every(d=>px+w+3<=d.x||d.x+d.w+3<=px||py+h+3<=d.y||d.y+d.h+3<=py))return{x:px,y:py};
   }
-  return{overlap:true,x:Math.min(5+docs.length*3,paperW-w),y:Math.min(7+docs.length*3,paperH-h)};
+  return{overlap:true,x:Math.min(5+docs.length*3,Math.max(0,paperW-w)),y:Math.min(7+docs.length*3,Math.max(0,paperH-h))};
 }
 function snapPosition(doc,x,y,zoom){
   const threshold=7*25.4/96/zoom;
@@ -296,7 +313,7 @@ function snapPosition(doc,x,y,zoom){
   ];
 }
 function bindDrag(d){d.el.addEventListener('pointerdown',e=>{const sx=e.clientX,sy=e.clientY,ox=d.x,oy=d.y,isTouch=e.pointerType==='touch',wasSelected=d===selected;let moved=false;if(!wasSelected)selectDoc(d);if(!isTouch||wasSelected)d.el.setPointerCapture(e.pointerId);const move=ev=>{if(isTouch&&!wasSelected)return;const distance=Math.hypot(ev.clientX-sx,ev.clientY-sy);if(distance<4)return;moved=true;ev.preventDefault();const z=Number($('#zoom').value)/100;[d.x,d.y]=snapPosition(d,ox+(ev.clientX-sx)*25.4/96/z,oy+(ev.clientY-sy)*25.4/96/z,z);render(d)};const finish=()=>{d.el.removeEventListener('pointermove',move);d.el.removeEventListener('pointerup',finish);d.el.removeEventListener('pointercancel',cancel);if(moved)setStatus(`照片位置：左 ${d.x.toFixed(1)} mm、上 ${d.y.toFixed(1)} mm`)};const cancel=()=>{d.el.removeEventListener('pointermove',move);d.el.removeEventListener('pointerup',finish);d.el.removeEventListener('pointercancel',cancel)};d.el.addEventListener('pointermove',move);d.el.addEventListener('pointerup',finish);d.el.addEventListener('pointercancel',cancel)})}
-function bindResize(d){d.el.querySelectorAll('.resize-handle').forEach(h=>h.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();selectDoc(d);const corner=h.dataset.corner,z=Number($('#zoom').value)/100,sx=e.clientX,sy=e.clientY,ox=d.x,oy=d.y,ow=d.w,oh=d.h;h.setPointerCapture(e.pointerId);const move=ev=>{const dx=(ev.clientX-sx)*25.4/96/z,dy=(ev.clientY-sy)*25.4/96/z;let left=ox,top=oy,right=ox+ow,bottom=oy+oh;if(corner.includes('e'))right=clamp(ox+ow+dx,ox+5,paperW);if(corner.includes('w'))left=clamp(ox+dx,0,ox+ow-5);if(corner.includes('s'))bottom=clamp(oy+oh+dy,oy+5,paperH);if(corner.includes('n'))top=clamp(oy+dy,0,oy+oh-5);d.x=left;d.y=top;d.w=right-left;d.h=bottom-top;d.ratio=d.w/d.h;d.presetKey='custom';render(d);$('#itemPreset').value='custom';$('#itemCustomSize').hidden=false;$('#w').value=d.w.toFixed(1);$('#h').value=d.h.toFixed(1)};const end=()=>{h.removeEventListener('pointermove',move);h.removeEventListener('pointerup',end);h.removeEventListener('pointercancel',end);setStatus(`印出尺寸：${d.w.toFixed(1)} × ${d.h.toFixed(1)} mm`)};h.addEventListener('pointermove',move);h.addEventListener('pointerup',end);h.addEventListener('pointercancel',end)}))}
+function bindResize(d){d.el.querySelectorAll('.resize-handle').forEach(h=>h.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();selectDoc(d);const corner=h.dataset.corner,z=Number($('#zoom').value)/100,sx=e.clientX,sy=e.clientY,ox=d.x,oy=d.y,ow=d.w,oh=d.h;h.setPointerCapture(e.pointerId);const move=ev=>{const dx=(ev.clientX-sx)*25.4/96/z,dy=(ev.clientY-sy)*25.4/96/z;let left=ox,top=oy,right=ox+ow,bottom=oy+oh;if(corner.includes('e'))right=Math.max(ox+5,ox+ow+dx);if(corner.includes('w'))left=clamp(ox+dx,0,ox+ow-5);if(corner.includes('s'))bottom=Math.max(oy+5,oy+oh+dy);if(corner.includes('n'))top=clamp(oy+dy,0,oy+oh-5);d.x=left;d.y=top;d.w=right-left;d.h=bottom-top;d.ratio=d.w/d.h;d.presetKey='custom';render(d);$('#itemPreset').value='custom';$('#itemCustomSize').hidden=false;$('#w').value=d.w.toFixed(1);$('#h').value=d.h.toFixed(1)};const end=()=>{h.removeEventListener('pointermove',move);h.removeEventListener('pointerup',end);h.removeEventListener('pointercancel',end);setStatus(`印出尺寸：${d.w.toFixed(1)} × ${d.h.toFixed(1)} mm`)};h.addEventListener('pointermove',move);h.addEventListener('pointerup',end);h.addEventListener('pointercancel',end)}))}
 function autoArrange(){let x=5,y=7,rowH=0;docs.forEach(d=>{if(x+d.w>paperW-5){x=5;y+=rowH+4;rowH=0}d.x=clamp(x,0,Math.max(0,paperW-d.w));d.y=clamp(y,0,Math.max(0,paperH-d.h));x+=d.w+4;rowH=Math.max(rowH,d.h);render(d)});setStatus('已依序自動排列')}
 $('#file').onchange=e=>{loadFiles(e.target.files);e.target.value=''};
 ['dragenter','dragover'].forEach(n=>$('#dropzone').addEventListener(n,e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'}));$('#dropzone').addEventListener('drop',e=>{e.preventDefault();if(step===2)loadFiles(e.dataTransfer.files)});
@@ -361,30 +378,60 @@ function updateSummary(){
   $('#summaryPaper').textContent=$('#paperSize').selectedOptions[0].textContent.split('（')[0].trim();
   $('#summarySize').textContent=paperW+' × '+paperH+' mm';
   $('#summaryCount').textContent=docs.length+' 張';
+  $('#outputOverflow').hidden=!docs.some(doc=>doc.x+doc.w>paperW+1e-6||doc.y+doc.h>paperH+1e-6);
 }
 function updatePaper(){
+  const landscape=$('[name="paperDirection"]:checked').value==='landscape';
   [paperW,paperH]=$('#paperSize').value.split(',').map(Number);
+  if(landscape)[paperW,paperH]=[paperH,paperW];
   document.documentElement.style.setProperty('--paper-w',mm(paperW));
   document.documentElement.style.setProperty('--paper-h',mm(paperH));
-  $('#w').max=$('#customW').max=paperW;$('#h').max=$('#customH').max=paperH;
   let ps=$('#dynamicPageSize');
   if(!ps){ps=document.createElement('style');ps.id='dynamicPageSize';document.head.appendChild(ps)}
   ps.textContent='@page{size:'+paperW+'mm '+paperH+'mm;margin:0}';
   updateSummary();$('#paperLabel').textContent=$('#summaryPaper').textContent+' · '+$('#summarySize').textContent;
   paperCards.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===$('#paperSize').selectedIndex)));
   docs.forEach(d=>{
-    const scale=Math.min(1,paperW/d.w,paperH/d.h);
-    if(scale<1){d.w*=scale;d.h*=scale;d.presetKey='custom'}
-    d.x=clamp(d.x,0,paperW-d.w);d.y=clamp(d.y,0,paperH-d.h);render(d);
+    d.x=clamp(d.x,0,Math.max(0,paperW-d.w));d.y=clamp(d.y,0,Math.max(0,paperH-d.h));render(d);
   });
   if(selected)selectDoc(selected);
   fitPreview();
 }
 document.body.dataset.step=1;
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goTo(Number(b.dataset.go)));
-$('#preset').onchange=e=>$('#customPreset').hidden=e.target.value!=='custom';
+function readDimension(value,fallback){
+  const number=Number(value.trim().replace(',','.'));
+  return value.trim()&&Number.isFinite(number)?number:fallback;
+}
+function focusDimension(input){
+  input.focus();
+  input.select();
+}
+for(const [width,height] of [['#customW','#customH'],['#w','#h']]){
+  for(const input of [$(width),$(height)]){
+    let justFocused=false;
+    input.addEventListener('pointerdown',()=>{justFocused=document.activeElement!==input});
+    input.addEventListener('focus',()=>input.select());
+    input.addEventListener('click',()=>{
+      if(justFocused)input.select();
+      justFocused=false;
+    });
+    input.addEventListener('keydown',event=>{
+      if(event.key!=='Enter'||event.isComposing)return;
+      event.preventDefault();
+      if(input===$(width))focusDimension($(height));
+      else input.blur();
+    });
+  }
+}
+$('#preset').onchange=event=>{
+  const custom=event.target.value==='custom';
+  $('#customPreset').hidden=!custom;
+  if(custom)focusDimension($('#customW'));
+};
 new ResizeObserver(fitPreview).observe(workspace);
 window.addEventListener('resize',fitPreview);
+document.querySelectorAll('[name="paperDirection"]').forEach(input=>input.onchange=updatePaper);
 updatePaper();syncSteps();
 function syncPosition(doc){
   for(const [id,position,limit] of [
@@ -405,14 +452,14 @@ for(const [id,axis] of [['#paperX','x'],['#paperY','y']]){
 }
 $('#center').onclick=()=>{
   if(!selected)return;
-  selected.x=(paperW-selected.w)/2;
-  selected.y=(paperH-selected.h)/2;
+  selected.x=Math.max(0,(Math.max(0,paperW-selected.w))/2);
+  selected.y=Math.max(0,(Math.max(0,paperH-selected.h))/2);
   render(selected);
 };
-function changeSize(axis,val){if(!selected)return;val=clamp(Number(val)||5,5,axis==='w'?paperW:paperH);selected[axis]=val;selected.x=clamp(selected.x,0,paperW-selected.w);selected.y=clamp(selected.y,0,paperH-selected.h);render(selected);selectDoc(selected)}
+function changeSize(axis,val){if(!selected)return;val=Math.max(5,readDimension(val,selected[axis]));selected[axis]=val;selected.x=clamp(selected.x,0,Math.max(0,paperW-selected.w));selected.y=clamp(selected.y,0,Math.max(0,paperH-selected.h));render(selected);selectDoc(selected)}
 $('#w').onchange=e=>changeSize('w',e.target.value);$('#h').onchange=e=>changeSize('h',e.target.value);
 $('#itemPreset').innerHTML=$('#preset').innerHTML;
-$('#itemPreset').onchange=e=>{if(!selected)return;selected.presetKey=e.target.value;const custom=e.target.value==='custom';$('#itemCustomSize').hidden=!custom;if(!custom){const [w,h]=e.target.value.split(',').map(Number);selected.w=Math.min(w,paperW);selected.h=Math.min(h,paperH);selected.ratio=selected.w/selected.h;selected.x=clamp(selected.x,0,paperW-selected.w);selected.y=clamp(selected.y,0,paperH-selected.h);render(selected);selectDoc(selected)}else{$('#w').value=selected.w.toFixed(1);$('#h').value=selected.h.toFixed(1)}};
+$('#itemPreset').onchange=e=>{if(!selected)return;selected.presetKey=e.target.value;const custom=e.target.value==='custom';$('#itemCustomSize').hidden=!custom;if(!custom){const [w,h]=e.target.value.split(',').map(Number);selected.w=w;selected.h=h;selected.ratio=selected.w/selected.h;selected.x=clamp(selected.x,0,Math.max(0,paperW-selected.w));selected.y=clamp(selected.y,0,Math.max(0,paperH-selected.h));render(selected);selectDoc(selected)}else{$('#w').value=selected.w.toFixed(1);$('#h').value=selected.h.toFixed(1);focusDimension($('#w'))}};
 $('#sheetClose').onclick=()=>selectDoc(null);$('#sheetHandle').onclick=()=>$('#inspector').classList.toggle('collapsed');
 document.querySelectorAll('[data-sheet-tab]').forEach(button=>{
   button.onclick=()=>{
@@ -451,30 +498,77 @@ $('#resetFrame').onclick=()=>{
   $('#imageX').value=$('#imageY').value=50;
   updateImageView();
 };
-async function rotateSelectedPhoto(direction,sourceButton){if(!selected)return;const d=selected,btn=sourceButton,old=[...btn.childNodes];const buttons=[$('#rotatePhotoLeft'),$('#rotatePhotoRight')];buttons.forEach(button=>button.disabled=true);btn.textContent='旋轉中…';try{const img=await imageReady(d.el.querySelector('img').src),maxEdge=6000,scale=Math.min(1,maxEdge/Math.max(img.naturalWidth,img.naturalHeight)),sw=Math.max(1,Math.round(img.naturalWidth*scale)),sh=Math.max(1,Math.round(img.naturalHeight*scale)),canvas=document.createElement('canvas');canvas.width=sh;canvas.height=sw;const g=canvas.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,canvas.width,canvas.height);if(direction>0){g.translate(canvas.width,0);g.rotate(Math.PI/2)}else{g.translate(0,canvas.height);g.rotate(-Math.PI/2)}g.drawImage(img,0,0,sw,sh);const src=canvas.toDataURL('image/jpeg',.96);if(!docs.includes(d))return;d.originalSrc=src;d.el.querySelector('img').src=src;const fit=Math.min(1,paperW/d.h,paperH/d.w);[d.w,d.h]=[d.h*fit,d.w*fit];d.presetKey='custom';d.ratio=d.w/d.h;d.x=clamp(d.x,0,Math.max(0,paperW-d.w));d.y=clamp(d.y,0,Math.max(0,paperH-d.h));d.imageZoom=100;d.imageX=50;d.imageY=50;if(selected===d)selectDoc(d);render(d);setStatus(direction>0?'相片像素與印出尺寸已向右旋轉 90°':'相片像素與印出尺寸已向左旋轉 90°')}catch(e){console.error(e);setStatus('相片旋轉失敗，請換一張照片再試')}finally{buttons.forEach(button=>button.disabled=false);btn.replaceChildren(...old)}}
+async function rotateSelectedPhoto(direction,sourceButton){if(!selected)return;const d=selected,btn=sourceButton,old=[...btn.childNodes];const buttons=[$('#rotatePhotoLeft'),$('#rotatePhotoRight')];buttons.forEach(button=>button.disabled=true);btn.textContent='旋轉中…';try{const img=await imageReady(d.el.querySelector('img').src),maxEdge=6000,scale=Math.min(1,maxEdge/Math.max(img.naturalWidth,img.naturalHeight)),sw=Math.max(1,Math.round(img.naturalWidth*scale)),sh=Math.max(1,Math.round(img.naturalHeight*scale)),canvas=document.createElement('canvas');canvas.width=sh;canvas.height=sw;const g=canvas.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,canvas.width,canvas.height);if(direction>0){g.translate(canvas.width,0);g.rotate(Math.PI/2)}else{g.translate(0,canvas.height);g.rotate(-Math.PI/2)}g.drawImage(img,0,0,sw,sh);if(!docs.includes(d))return;
+  const rotatedWidth=d.h,rotatedHeight=d.w;
+  const src=canvas.toDataURL('image/jpeg',.96);
+  d.originalSrc=src;d.el.querySelector('img').src=src;
+  d.w=rotatedWidth;d.h=rotatedHeight;d.presetKey='custom';d.ratio=d.w/d.h;d.x=clamp(d.x,0,Math.max(0,paperW-d.w));d.y=clamp(d.y,0,Math.max(0,paperH-d.h));d.imageZoom=100;d.imageX=50;d.imageY=50;if(selected===d)selectDoc(d);render(d);setStatus('已旋轉，尺寸為 '+Number(d.w.toFixed(2))+' × '+Number(d.h.toFixed(2))+' mm'+
+    (d.w>paperW||d.h>paperH?'，超出紙張，可在「排版」調整尺寸':''))
+}catch(e){console.error(e);setStatus('相片旋轉失敗，請換一張照片再試')}finally{buttons.forEach(button=>button.disabled=false);btn.replaceChildren(...old)}}
 $('#rotatePhotoLeft').onclick=e=>rotateSelectedPhoto(-1,e.currentTarget);$('#rotatePhotoRight').onclick=e=>rotateSelectedPhoto(1,e.currentTarget);
 function updateAdjustments(){if(!selected)return;['exposure','contrast','sharpness','saturation'].forEach(k=>{selected[k]=Number($('#'+k).value);$('#'+k+'Label').textContent=(selected[k]>0?'+':'')+selected[k]});render(selected)}
 ['exposure','contrast','sharpness','saturation'].forEach(id=>$('#'+id).addEventListener('input',updateAdjustments));
 $('#resetAdjustments').onclick=()=>{if(!selected)return;selected.exposure=selected.contrast=selected.sharpness=selected.saturation=0;selectDoc(selected);render(selected);setStatus('已恢復原始照片效果')};
 $('#autoEnhance').onclick=async()=>{if(!selected)return;const doc=selected,btn=$('#autoEnhance'),old=btn.textContent;btn.disabled=true;btn.textContent='分析中…';try{const img=await imageReady(doc.el.querySelector('img').src),c=document.createElement('canvas'),size=120;c.width=size;c.height=size;const g=c.getContext('2d');g.drawImage(img,0,0,size,size);const px=g.getImageData(0,0,size,size).data;let total=0;for(let i=0;i<px.length;i+=16)total+=px[i]*.2126+px[i+1]*.7152+px[i+2]*.0722;const avg=total/(px.length/16);if(!docs.includes(doc))return;doc.exposure=Math.round(clamp((145-avg)*.45,-20,30));doc.contrast=18;doc.sharpness=45;doc.saturation=0;if(selected===doc)selectDoc(doc);render(doc);setStatus('已自動調整曝光、對比與清晰度')}catch(e){setStatus('自動調整失敗，請改用滑桿調整')}finally{btn.disabled=false;btn.textContent=old}};
-function updateWatermark(){if(!selected)return;selected.watermarkEnabled=$('#watermarkEnabled').checked;selected.watermarkText=$('#watermarkText').value.trim();selected.watermarkStyle=$('#watermarkStyle').value;selected.watermarkDirection=$('#watermarkDirection').value;['watermarkOpacity','watermarkSize','watermarkX','watermarkY'].forEach(k=>{selected[k]=Number($('#'+k).value);$('#'+k+'Label').textContent=selected[k]+(k==='watermarkSize'?'':'%')});render(selected)}
-['watermarkEnabled','watermarkText','watermarkStyle','watermarkDirection','watermarkOpacity','watermarkSize','watermarkX','watermarkY'].forEach(id=>$('#'+id).addEventListener('input',updateWatermark));
+function updateWatermark(){if(!selected)return;selected.watermarkEnabled=$('#watermarkEnabled').checked;selected.watermarkText=$('#watermarkText').value.trim();selected.watermarkStyle=$('#watermarkStyle').value;selected.watermarkDirection=$('#watermarkDirection').value;selected.watermarkAngle=clamp(Number($('#watermarkAngle').value)||0,-180,180);$('#watermarkAngleLabel').textContent=selected.watermarkAngle+'°';['watermarkOpacity','watermarkSize','watermarkX','watermarkY'].forEach(k=>{selected[k]=Number($('#'+k).value);$('#'+k+'Label').textContent=selected[k]+'%'});render(selected)}
+['watermarkEnabled','watermarkText','watermarkStyle','watermarkDirection','watermarkAngle','watermarkOpacity','watermarkSize','watermarkX','watermarkY'].forEach(id=>$('#'+id).addEventListener('input',updateWatermark));
 document.querySelectorAll('[data-watermark]').forEach(btn=>btn.onclick=()=>{if(!selected)return;$('#watermarkText').value=btn.dataset.watermark;$('#watermarkEnabled').checked=true;updateWatermark();setStatus(`已套用浮水印「${btn.dataset.watermark}」`)});
-$('#duplicate').onclick=()=>{if(!selected)return;const d=selected,el=d.el.cloneNode(true);el.classList.remove('selected');paper.appendChild(el);const c={...d,id:++seq,x:clamp(d.x+6,0,paperW-d.w),y:clamp(d.y+6,0,paperH-d.h),el};docs.push(c);bindDrag(c);bindResize(c);render(c);selectDoc(c)};
+$('#duplicate').onclick=()=>{if(!selected)return;const d=selected,el=d.el.cloneNode(true);el.classList.remove('selected');delete el.querySelector('.watermark').dataset.renderKey;paper.appendChild(el);const c={...d,id:++seq,x:clamp(d.x+6,0,Math.max(0,paperW-d.w)),y:clamp(d.y+6,0,Math.max(0,paperH-d.h)),el};docs.push(c);bindDrag(c);bindResize(c);render(c);selectDoc(c)};
 $('#remove').onclick=()=>{if(!selected)return;selected.el.remove();docs=docs.filter(d=>d!==selected);selectDoc(null);paper.classList.toggle('has-docs',docs.length>0)};
 $('#fit').onclick=()=>{
   if(!selected)return;
-  const inset=(position,space)=>space<10?space/2:clamp(position,5,space-5);
-  selected.x=inset(selected.x,paperW-selected.w);
-  selected.y=inset(selected.y,paperH-selected.h);
+  const inset=(position,space)=>space<10?Math.max(0,space/2):clamp(position,5,space-5);
+  selected.x=inset(selected.x,Math.max(0,paperW-selected.w));
+  selected.y=inset(selected.y,Math.max(0,paperH-selected.h));
   render(selected);
 };
 $('#auto').onclick=autoArrange;$('#clear').onclick=()=>{if(docs.length&&!confirm('確定清除所有文件？'))return;docs.forEach(d=>d.el.remove());docs=[];selectDoc(null);paper.classList.remove('has-docs')};
 $('#showCal').onchange=e=>$('#calibration').classList.toggle('show',e.target.checked);
 function imageReady(src){return new Promise((resolve,reject)=>{const img=new Image;img.onload=()=>resolve(img);img.onerror=reject;img.src=src})}
 function sharpenCanvas(canvas,amount){if(!amount||canvas.width*canvas.height>4000000)return;const g=canvas.getContext('2d'),im=g.getImageData(0,0,canvas.width,canvas.height),src=new Uint8ClampedArray(im.data),dst=im.data,w=canvas.width,h=canvas.height,a=amount/100*.75;for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=(y*w+x)*4;for(let c=0;c<3;c++){const center=src[i+c],around=(src[i-4+c]+src[i+4+c]+src[i-w*4+c]+src[i+w*4+c])/4;dst[i+c]=clamp(center+(center-around)*a,0,255)}}g.putImageData(im,0,0)}
-function drawWatermark(g,d,cw,ch,dpi){if(!d.watermarkEnabled||!d.watermarkText)return;const fontPx=Math.max(14,d.watermarkSize*.22/25.4*dpi),pad=fontPx*.5;g.save();g.translate(cw*d.watermarkX/100,ch*d.watermarkY/100);g.rotate((d.watermarkDirection==='vertical'?78:-12)*Math.PI/180);g.globalAlpha=d.watermarkOpacity/100;g.font=`900 ${fontPx}px sans-serif`;g.textAlign='center';g.textBaseline='middle';const maxW=cw*.82,text=d.watermarkText,width=Math.min(maxW,g.measureText(text).width),boxW=width+pad*2,boxH=fontPx+pad*1.25;g.strokeStyle=d.watermarkStyle==='gray'?'#222':'#b01818';g.fillStyle=g.strokeStyle;g.lineWidth=Math.max(2,fontPx*(d.watermarkStyle==='gray'?.045:.09));g.strokeRect(-boxW/2,-boxH/2,boxW,boxH);g.fillText(text,0,0,maxW);g.restore()}
-async function docCanvas(d){const img=await imageReady(d.outputSrc||d.el.querySelector('img').src),dpi=300,cw=Math.max(1,Math.round(d.w/25.4*dpi)),ch=Math.max(1,Math.round(d.h/25.4*dpi)),canvas=document.createElement('canvas');canvas.width=cw;canvas.height=ch;const g=canvas.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cw,ch);const base=d.displayMode==='contain'?Math.min(cw/img.naturalWidth,ch/img.naturalHeight):Math.max(cw/img.naturalWidth,ch/img.naturalHeight),scale=base*d.imageZoom/100,iw=img.naturalWidth*scale,ih=img.naturalHeight*scale,x=(cw-iw)*d.imageX/100,y=(ch-ih)*d.imageY/100;g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.filter=`brightness(${100+d.exposure}%) contrast(${100+d.contrast+d.sharpness*.12}%) saturate(${100+d.saturation}%)`;g.drawImage(img,x,y,iw,ih);g.filter='none';sharpenCanvas(canvas,d.sharpness);drawWatermark(g,d,cw,ch,dpi);return canvas}
+function renderWatermark(doc){
+  const canvas=doc.el.querySelector('.watermark');
+  const visible=Boolean(doc.watermarkEnabled&&doc.watermarkText);
+  canvas.classList.toggle('show',visible);
+  if(!visible)return;
+  const key=[doc.w,doc.h,doc.watermarkText,doc.watermarkStyle,doc.watermarkDirection,
+    doc.watermarkAngle,doc.watermarkOpacity,doc.watermarkSize,doc.watermarkX,doc.watermarkY].join('|');
+  if(canvas.dataset.renderKey===key&&canvas.dataset.painted==='yes')return;
+  const pixelsPerMm=Math.min(5,2000/Math.max(doc.w,doc.h));
+  canvas.width=Math.max(1,Math.round(doc.w*pixelsPerMm));
+  canvas.height=Math.max(1,Math.round(doc.h*pixelsPerMm));
+  drawWatermark(canvas.getContext('2d'),doc,canvas.width,canvas.height);
+  canvas.dataset.renderKey=key;
+  canvas.dataset.painted='yes';
+}
+function drawWatermark(context,doc,width,height){
+  if(!doc.watermarkEnabled||!doc.watermarkText)return;
+  const radians=doc.watermarkAngle*Math.PI/180;
+  const vertical=doc.watermarkDirection==='vertical';
+  const lines=vertical?Array.from(doc.watermarkText):[doc.watermarkText];
+  const fontSize=Math.min(width,height)*doc.watermarkSize/100;
+  const padding=fontSize*.32;
+  context.save();
+  context.translate(width*doc.watermarkX/100,height*doc.watermarkY/100);
+  context.rotate(radians);
+  context.globalAlpha=doc.watermarkOpacity/100;
+  context.font='900 '+fontSize+'px sans-serif';
+  context.textAlign='center';
+  context.textBaseline='middle';
+  const lineHeight=fontSize*1.15;
+  const textWidth=Math.max(...lines.map(line=>context.measureText(line).width));
+  const boxWidth=textWidth+2*padding;
+  const boxHeight=fontSize+(lines.length-1)*lineHeight+2*padding;
+  const cos=Math.abs(Math.cos(radians)),sin=Math.abs(Math.sin(radians));
+  const scale=Math.min(1,width*.96/(boxWidth*cos+boxHeight*sin),height*.96/(boxWidth*sin+boxHeight*cos));
+  context.scale(scale,scale);
+  context.strokeStyle=context.fillStyle=doc.watermarkStyle==='gray'?'#222':'#b01818';
+  context.lineWidth=fontSize*(doc.watermarkStyle==='gray'?.045:.09);
+  context.strokeRect(-boxWidth/2,-boxHeight/2,boxWidth,boxHeight);
+  lines.forEach((line,index)=>context.fillText(line,0,(index-(lines.length-1)/2)*lineHeight));
+  context.restore();
+}
+async function docCanvas(d){const img=await imageReady(d.outputSrc||d.el.querySelector('img').src),dpi=Math.min(300,6000*25.4/Math.max(d.w,d.h)),cw=Math.max(1,Math.round(d.w/25.4*dpi)),ch=Math.max(1,Math.round(d.h/25.4*dpi)),canvas=document.createElement('canvas');canvas.width=cw;canvas.height=ch;const g=canvas.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cw,ch);const base=d.displayMode==='contain'?Math.min(cw/img.naturalWidth,ch/img.naturalHeight):Math.max(cw/img.naturalWidth,ch/img.naturalHeight),scale=base*d.imageZoom/100,iw=img.naturalWidth*scale,ih=img.naturalHeight*scale,x=(cw-iw)*d.imageX/100,y=(ch-ih)*d.imageY/100;g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.filter=`brightness(${100+d.exposure}%) contrast(${100+d.contrast+d.sharpness*.12}%) saturate(${100+d.saturation}%)`;g.drawImage(img,x,y,iw,ih);g.filter='none';sharpenCanvas(canvas,d.sharpness);drawWatermark(g,d,cw,ch);return canvas}
 async function downloadPDF(){if(!docs.length){setStatus('請先加入至少一張照片');return}const width=paperW,height=paperH,calibrate=$('#showCal').checked,items=docs.map(d=>({...d,outputSrc:d.el.querySelector('img').src}));const pdfTab=window.open('about:blank','_blank');if(!pdfTab){setStatus('瀏覽器阻擋了新分頁，請允許彈出式視窗後再試一次');return}pdfTab.document.write('<!doctype html><meta charset="utf-8"><title>正在製作 PDF</title><style>body{font-family:system-ui;padding:32px;color:#173126}p{color:#5c6d64}</style><h2>正在製作 PDF…</h2><p>完成後會在此分頁顯示，原本的編輯畫面仍會保留。</p>');pdfTab.document.close();const btn=$('#print'),old=btn.textContent;btn.disabled=true;btn.textContent='正在製作 PDF…';try{await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',()=>!!window.jspdf?.jsPDF);const orientation=width>height?'landscape':'portrait',pdf=new window.jspdf.jsPDF({orientation,unit:'mm',format:[width,height],compress:true});for(let i=0;i<items.length;i++){setStatus(`正在處理第 ${i+1}／${items.length} 張照片…`);const canvas=await docCanvas(items[i]);pdf.addImage(canvas.toDataURL('image/jpeg',.94),'JPEG',items[i].x,items[i].y,items[i].w,items[i].h,undefined,'FAST')}if(calibrate){pdf.setDrawColor(0);pdf.setLineWidth(.4);pdf.line(10,height-8,60,height-8);pdf.line(10,height-9.5,10,height-6.5);pdf.line(60,height-9.5,60,height-6.5);pdf.setFontSize(8);pdf.text('50 mm',31,height-10)}const blobUrl=URL.createObjectURL(pdf.output('blob'));pdfTab.location.replace(blobUrl);setTimeout(()=>URL.revokeObjectURL(blobUrl),300000);setStatus('PDF 已在新分頁開啟，編輯畫面已保留')}catch(e){console.error(e);pdfTab.document.body.innerHTML='<h2>PDF 產生失敗</h2><p>請回到原本的編輯分頁，確認網路連線後再試一次。</p>';setStatus('PDF 產生失敗，請確認網路連線後再試一次')}finally{btn.disabled=false;btn.textContent=old}}
 $('#print').onclick=downloadPDF;
 let backgroundTap=null;
